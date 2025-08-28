@@ -75,3 +75,11 @@ jobs:
     with:
       source-directory: 8.2/fpm
       image-tag: fuadkleb/php-mssql:8.2-fpm
+
+  build-8_2-apache:
+    uses: ./.github/workflows/createtest.yml
+    name: fuadkleb/php-mssql:8.2-apache
+    secrets: inherit
+    with:
+      source-directory: 8.2/apache
+      image-tag: fuadkleb/php-mssql:8.2-apache
