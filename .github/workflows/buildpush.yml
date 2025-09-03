@@ -67,6 +67,7 @@ jobs:
     with:
       source-directory: 8.2/cli
       image-tag: fuadkleb/php-mssql:8.2-cli
+      platforms: linux/amd64, linux/arm64
 
   build-8_2-fpm:
     uses: ./.github/workflows/createtest.mssql.yml
@@ -75,6 +76,7 @@ jobs:
     with:
       source-directory: 8.2/fpm
       image-tag: fuadkleb/php-mssql:8.2-fpm
+      platforms: linux/amd64, linux/arm64
 
   build-8_2-apache:
     uses: ./.github/workflows/createtest.mssql.yml
@@ -83,6 +85,7 @@ jobs:
     with:
       source-directory: 8.2/apache
       image-tag: fuadkleb/php-mssql:8.2-apache
+      platforms: linux/amd64, linux/arm64
 
   build-7_4-apache:
     uses: ./.github/workflows/createtest.pgsql.yml
@@ -91,3 +94,4 @@ jobs:
     with:
       source-directory: 7.4/apache-pgsql
       image-tag: fuadkleb/php-pgsql:7.4-apache
+      platforms: linux/amd64, linux/arm64

@@ -12,7 +12,7 @@ RUN set -eux; \
   ACCEPT_EULA=Y apt-get install -y --no-install-recommends \
     msodbcsql18 mssql-tools18 \
     unixodbc unixodbc-dev odbcinst1debian2 libodbc1 \
-    libicu72 libpng16-16 libzip4 unzip; \
+    libicu70 libpng16-16 libzip5 unzip; \
   rm -rf /var/lib/apt/lists/*
 
 # Ekstensi PHP
