@@ -4,10 +4,63 @@ on:
   push:
     branches:
       - main
+  # optional: also on PRs
+  pull_request:
 
 jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      php84-cli: ${{ steps.filter.outputs.php84-cli }}
+      php84-fpm: ${{ steps.filter.outputs.php84-fpm }}
+      php84-fpm-alpine: ${{ steps.filter.outputs.php84-fpm-alpine }}
+      php84-franken: ${{ steps.filter.outputs.php84-franken }}
+      php83-cli: ${{ steps.filter.outputs.php83-cli }}
+      php83-fpm: ${{ steps.filter.outputs.php83-fpm }}
+      php82-cli: ${{ steps.filter.outputs.php82-cli }}
+      php82-fpm: ${{ steps.filter.outputs.php82-fpm }}
+      php82-apache: ${{ steps.filter.outputs.php82-apache }}
+      php74-apache: ${{ steps.filter.outputs.php74-apache }}
+      ci-config: ${{ steps.filter.outputs.ci-config }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            # Build contexts
+            php84-cli:
+              - '8.4/cli/**'
+            php84-fpm:
+              - '8.4/fpm/**'
+            php84-fpm-alpine:
+              - '8.4/fpm-alpine/**'
+            php84-franken:
+              - '8.4/franken/**'
+            php83-cli:
+              - '8.3/cli/**'
+            php83-fpm:
+              - '8.3/fpm/**'
+            php82-cli:
+              - '8.2/cli/**'
+            php82-fpm:
+              - '8.2/fpm/**'
+            php82-apache:
+              - '8.2/apache/**'
+            php74-apache:
+              - '7.4/apache-pgsql/**'
+
+            # If workflow or shared CI files change, allow all builds
+            ci-config:
+              - '.github/workflows/**'
+              - '.github/actions/**'
+
   # PHP 8.4 Debian
   build-8_4-cli:
+    needs: changes
+    if: needs.changes.outputs.php84-cli == 'true' || needs.changes.outputs.ci-config == 'true'
     uses: ./.github/workflows/createtest.mssql.yml
     name: fuadkleb/php-mssql:8.4-cli
     secrets: inherit
@@ -17,6 +70,8 @@ jobs:
       platforms: linux/amd64, linux/arm64
 
   build-8_4-fpm:
+    needs: changes
+    if: needs.changes.outputs.php84-fpm == 'true' || needs.changes.outputs.ci-config == 'true'
     uses: ./.github/workflows/createtest.mssql.yml
     name: fuadkleb/php-mssql:8.4-fpm
     secrets: inherit
@@ -26,6 +81,8 @@ jobs:
       platforms: linux/amd64, linux/arm64
 
   build-8_4-fpm-alpine:
+    needs: changes
+    if: needs.changes.outputs.php84-fpm-alpine == 'true' || needs.changes.outputs.ci-config == 'true'
     uses: ./.github/workflows/createtest.mssql.yml
     name: fuadkleb/php-mssql:8.4-fpm-alpine
     secrets: inherit
@@ -35,6 +92,8 @@ jobs:
       platforms: linux/amd64, linux/arm64
 
   build-8_4-franken:
+    needs: changes
+    if: needs.changes.outputs.php84-franken == 'true' || needs.changes.outputs.ci-config == 'true'
     uses: ./.github/workflows/createtest.mssql.yml
     name: fuadkleb/php-mssql:8.4-franken
     secrets: inherit
@@ -44,6 +103,8 @@ jobs:
 
   # PHP 8.3 Debian
   build-8_3-cli:
+    needs: changes
+    if: needs.changes.outputs.php83-cli == 'true' || needs.changes.outputs.ci-config == 'true'
     uses: ./.github/workflows/createtest.mssql.yml
     name: fuadkleb/php-mssql:8.3-cli
     secrets: inherit
@@ -52,6 +113,8 @@ jobs:
       image-tag: fuadkleb/php-mssql:8.3-cli
 
   build-8_3-fpm:
+    needs: changes
+    if: needs.changes.outputs.php83-fpm == 'true' || needs.changes.outputs.ci-config == 'true'
     uses: ./.github/workflows/createtest.mssql.yml
     name: fuadkleb/php-mssql:8.3-fpm
     secrets: inherit
@@ -61,33 +124,39 @@ jobs:
 
   # PHP 8.2 Debian
   build-8_2-cli:
+    needs: changes
+    if: needs.changes.outputs.php82-cli == 'true' || needs.changes.outputs.ci-config == 'true'
     uses: ./.github/workflows/createtest.mssql.yml
     name: fuadkleb/php-mssql:8.2-cli
     secrets: inherit
     with:
       source-directory: 8.2/cli
       image-tag: fuadkleb/php-mssql:8.2-cli
-      platforms: linux/amd64, linux/arm64
 
   build-8_2-fpm:
+    needs: changes
+    if: needs.changes.outputs.php82-fpm == 'true' || needs.changes.outputs.ci-config == 'true'
     uses: ./.github/workflows/createtest.mssql.yml
     name: fuadkleb/php-mssql:8.2-fpm
     secrets: inherit
     with:
       source-directory: 8.2/fpm
       image-tag: fuadkleb/php-mssql:8.2-fpm
-      platforms: linux/amd64, linux/arm64
 
   build-8_2-apache:
+    needs: changes
+    if: needs.changes.outputs.php82-apache == 'true' || needs.changes.outputs.ci-config == 'true'
     uses: ./.github/workflows/createtest.mssql.yml
     name: fuadkleb/php-mssql:8.2-apache
     secrets: inherit
     with:
       source-directory: 8.2/apache
       image-tag: fuadkleb/php-mssql:8.2-apache
-      platforms: linux/amd64, linux/arm64
 
+  # PHP 7.4 (PostgreSQL)
   build-7_4-apache:
+    needs: changes
+    if: needs.changes.outputs.php74-apache == 'true' || needs.changes.outputs.ci-config == 'true'
     uses: ./.github/workflows/createtest.pgsql.yml
     name: fuadkleb/php-pgsql:7.4-apache
     secrets: inherit

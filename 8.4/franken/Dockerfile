@@ -1,5 +1,5 @@
 # PHP 8.4 + FrankenPHP (Debian 12)
-FROM dunglas/frankenphp:php8.4
+FROM dunglas/frankenphp:php8.4-bookworm
 
 # # Microsoft ODBC 18 + runtime ODBC deps
 RUN set -eux; \
@@ -12,7 +12,7 @@ RUN set -eux; \
   ACCEPT_EULA=Y apt-get install -y --no-install-recommends \
     msodbcsql18 mssql-tools18 \
     unixodbc unixodbc-dev odbcinst1debian2 libodbc1 \
-    libicu70 libpng16-16 libzip5 unzip; \
+    libicu72 libpng16-16 libzip4 unzip; \
   rm -rf /var/lib/apt/lists/*
 
 # Ekstensi PHP
