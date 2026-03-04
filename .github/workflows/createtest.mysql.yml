@@ -1,0 +1,96 @@
+name: Create and test Docker image
+
+on:
+  workflow_call:
+    inputs:
+      source-directory:
+        description: "The source directory relative to the repository root."
+        type: string
+        required: true
+      image-tag:
+        description: "The image tag to use for the Docker image."
+        type: string
+        required: true
+      platforms:
+        description: "Platforms to build, comma-separated (e.g. linux/amd64,linux/arm64)."
+        type: string
+        required: false
+        default: "linux/amd64"
+    secrets:
+      DOCKER_USERNAME:
+        required: true
+      DOCKER_PASSWORD:
+        required: true
+      TESTS_MYSQL_PASSWORD:
+        required: true
+
+jobs:
+  build_and_test:
+    name: Build, test and publish Docker image
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.TESTS_MYSQL_PASSWORD }}
+          MYSQL_DATABASE: testdb
+          MYSQL_USER: mysql
+          MYSQL_PASSWORD: ${{ secrets.TESTS_MYSQL_PASSWORD }}
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -u root --password=${{ secrets.TESTS_MYSQL_PASSWORD }} || exit 1"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build AMD64 ONLY and load into the local Docker engine for testing
+      - name: Build (amd64 only) for tests
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ inputs.source-directory }}
+          tags: ${{ inputs.image-tag }}-ci
+          platforms: linux/amd64
+          load: true
+
+      - name: Test MySQL connection
+        uses: addnab/docker-run-action@v3
+        with:
+          image: ${{ inputs.image-tag }}-ci
+          options: >-
+            -v ${{ github.workspace }}/.ci/tests:/work
+            --network host
+            -e MYSQL_HOST=127.0.0.1
+            -e MYSQL_PORT=3306
+            -e MYSQL_DATABASE=testdb
+            -e MYSQL_USER=mysql
+            -e MYSQL_PASSWORD=${{ secrets.TESTS_MYSQL_PASSWORD }}
+          run: php /work/test_conn_mysql.php
+
+      # Build & push multi-arch manifest for the real tag
+      - name: Build & Push (multi-arch)
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ inputs.source-directory }}
+          tags: ${{ inputs.image-tag }}
+          platforms: ${{ inputs.platforms }} # e.g. "linux/amd64,linux/arm64"
+          push: true
+          cache-from: type=registry,ref=${{ inputs.image-tag }}-cache
+          cache-to: type=registry,ref=${{ inputs.image-tag }}-cache,mode=max

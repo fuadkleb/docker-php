@@ -14,6 +14,9 @@ jobs:
     outputs:
       php84-cli: ${{ steps.filter.outputs.php84-cli }}
       php84-fpm: ${{ steps.filter.outputs.php84-fpm }}
+      php84-fpm-mysql: ${{ steps.filter.outputs.php84-fpm-mysql }}
+      php84-fpm-pgsql: ${{ steps.filter.outputs.php84-fpm-pgsql }}
+      php84-fpm-mssql: ${{ steps.filter.outputs.php84-fpm-mssql }}
       php84-fpm-alpine: ${{ steps.filter.outputs.php84-fpm-alpine }}
       php84-franken: ${{ steps.filter.outputs.php84-franken }}
       php83-cli: ${{ steps.filter.outputs.php83-cli }}
@@ -35,6 +38,12 @@ jobs:
               - '8.4/cli/**'
             php84-fpm:
               - '8.4/fpm/**'
+            php84-fpm-mssql:
+              - '8.4/fpm-mssql/**'
+            php84-fpm-mysql:
+              - '8.4/fpm-mysql/**'
+            php84-fpm-pgsql:
+              - '8.4/fpm-pgsql/**'
             php84-fpm-alpine:
               - '8.4/fpm-alpine/**'
             php84-franken:
@@ -78,6 +87,39 @@ jobs:
     with:
       source-directory: 8.4/fpm
       image-tag: fuadkleb/php-mssql:8.4-fpm
+      platforms: linux/amd64, linux/arm64
+
+  build-8_4-fpm-mssql:
+    needs: changes
+    if: needs.changes.outputs.php84-fpm-mssql == 'true' || needs.changes.outputs.ci-config == 'true'
+    uses: ./.github/workflows/createtest.mssql.yml
+    name: fuadkleb/php-mssql:8.4-fpm-mssql
+    secrets: inherit
+    with:
+      source-directory: 8.4/fpm-mssql
+      image-tag: fuadkleb/php-mssql:8.4-fpm-mssql
+      platforms: linux/amd64, linux/arm64
+
+  build-8_4-fpm-mysql:
+    needs: changes
+    if: needs.changes.outputs.php84-fpm-mysql == 'true' || needs.changes.outputs.ci-config == 'true'
+    uses: ./.github/workflows/createtest.mysql.yml
+    name: fuadkleb/php-mysql:8.4-fpm-mysql
+    secrets: inherit
+    with:
+      source-directory: 8.4/fpm-mysql
+      image-tag: fuadkleb/php-mysql:8.4-fpm-mysql
+      platforms: linux/amd64, linux/arm64
+
+  build-8_4-fpm-pgsql:
+    needs: changes
+    if: needs.changes.outputs.php84-fpm-pgsql == 'true' || needs.changes.outputs.ci-config == 'true'
+    uses: ./.github/workflows/createtest.pgsql.yml
+    name: fuadkleb/php-pgsql:8.4-fpm-pgsql
+    secrets: inherit
+    with:
+      source-directory: 8.4/fpm-pgsql
+      image-tag: fuadkleb/php-pgsql:8.4-fpm-pgsql
       platforms: linux/amd64, linux/arm64
 
   build-8_4-fpm-alpine:
