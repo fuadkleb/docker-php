@@ -14,8 +14,7 @@ RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         ca-certificates curl gnupg2 unzip \
-        libpng-dev libzip-dev \
-        ; \
+        libpng-dev libzip-dev git; \
     rm -rf /var/lib/apt/lists/*
 
 # -- Add Microsoft repo for Debian 12 (Bookworm) & install ODBC + tools ----------

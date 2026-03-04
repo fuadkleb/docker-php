@@ -40,10 +40,10 @@ jobs:
               - '8.4/fpm/**'
             php84-fpm-mssql:
               - '8.4/fpm-mssql/**'
-            php84-fpm-mysql:
-              - '8.4/fpm-mysql/**'
             php84-fpm-pgsql:
               - '8.4/fpm-pgsql/**'
+            php84-fpm-mysql:
+              - '8.4/fpm-mysql/**'
             php84-fpm-alpine:
               - '8.4/fpm-alpine/**'
             php84-franken:
