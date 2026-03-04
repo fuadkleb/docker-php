@@ -40,7 +40,7 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd "mysqladmin ping -h 127.0.0.1 -u root --password=${{ secrets.TESTS_MYSQL_PASSWORD }} || exit 1"
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -u root --password=${MYSQL_ROOT_PASSWORD} || exit 1"
           --health-interval 5s
           --health-timeout 3s
           --health-retries 20
