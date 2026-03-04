@@ -49,7 +49,9 @@ RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         ca-certificates curl gnupg2 unzip \
+        git \
         libpng-dev libzip-dev \
+        wkhtmltopdf \
         ; \
     rm -rf /var/lib/apt/lists/*
 
@@ -72,8 +74,8 @@ COPY --from=php_ext /usr/bin/install-php-extensions /usr/bin/install-php-extensi
 RUN set -eux; \
     chmod +x /usr/bin/install-php-extensions; \
     install-php-extensions \
-      bcmath ds exif gd intl opcache pcntl \
-      pdo_sqlsrv sqlsrv redis zip pgsql pdo_pgsql curl
+      bcmath ds exif gd intl opcache pcntl sockets \
+      pdo_sqlsrv sqlsrv redis zip pgsql pdo_pgsql curl pdo_mysql mysqli
 
 # Optional: relax OpenSSL policy (only if you really need it)
 RUN sed -i 's/^\s*MinProtocol.*/MinProtocol = TLSv1.0/' /etc/ssl/openssl.cnf \
