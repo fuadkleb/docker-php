@@ -14,9 +14,9 @@ jobs:
     outputs:
       php84-cli: ${{ steps.filter.outputs.php84-cli }}
       php84-fpm: ${{ steps.filter.outputs.php84-fpm }}
+      php84-fpm-mssql: ${{ steps.filter.outputs.php84-fpm-mssql }}
       php84-fpm-mysql: ${{ steps.filter.outputs.php84-fpm-mysql }}
       php84-fpm-pgsql: ${{ steps.filter.outputs.php84-fpm-pgsql }}
-      php84-fpm-mssql: ${{ steps.filter.outputs.php84-fpm-mssql }}
       php84-fpm-alpine: ${{ steps.filter.outputs.php84-fpm-alpine }}
       php84-franken: ${{ steps.filter.outputs.php84-franken }}
       php83-cli: ${{ steps.filter.outputs.php83-cli }}
@@ -131,7 +131,7 @@ jobs:
     with:
       source-directory: 8.4/fpm-alpine
       image-tag: fuadkleb/php-mssql:8.4-fpm-alpine
-      platforms: linux/amd64, linux/arm64
+      platforms: linux/amd64
 
   build-8_4-franken:
     needs: changes

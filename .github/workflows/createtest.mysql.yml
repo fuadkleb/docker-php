@@ -76,7 +76,7 @@ jobs:
           options: >-
             -v ${{ github.workspace }}/.ci/tests:/work
             --network host
-            -e MYSQL_HOST=127.0.0.1
+            -e MYSQL_HOST=mysql
             -e MYSQL_PORT=3306
             -e MYSQL_DATABASE=testdb
             -e MYSQL_USER=mysql
