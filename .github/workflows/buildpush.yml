@@ -17,12 +17,14 @@ jobs:
       php84-fpm-mssql: ${{ steps.filter.outputs.php84-fpm-mssql }}
       php84-fpm-mysql: ${{ steps.filter.outputs.php84-fpm-mysql }}
       php84-fpm-pgsql: ${{ steps.filter.outputs.php84-fpm-pgsql }}
+      php84-fpm-nginx-pgsql: ${{ steps.filter.outputs.php84-fpm-nginx-pgsql }}
       php84-fpm-alpine: ${{ steps.filter.outputs.php84-fpm-alpine }}
       php84-franken: ${{ steps.filter.outputs.php84-franken }}
       php83-cli: ${{ steps.filter.outputs.php83-cli }}
       php83-fpm: ${{ steps.filter.outputs.php83-fpm }}
       php82-cli: ${{ steps.filter.outputs.php82-cli }}
       php82-fpm: ${{ steps.filter.outputs.php82-fpm }}
+      php82-fpm-nginx-pgsql: ${{ steps.filter.outputs.php82-fpm-nginx-pgsql }}
       php82-apache: ${{ steps.filter.outputs.php82-apache }}
       php74-apache: ${{ steps.filter.outputs.php74-apache }}
       ci-config: ${{ steps.filter.outputs.ci-config }}
@@ -42,6 +44,8 @@ jobs:
               - '8.4/fpm-mssql/**'
             php84-fpm-pgsql:
               - '8.4/fpm-pgsql/**'
+            php84-fpm-nginx-pgsql:
+              - '8.4/fpm-nginx-pgsql/**'
             php84-fpm-mysql:
               - '8.4/fpm-mysql/**'
             php84-fpm-alpine:
@@ -56,6 +60,8 @@ jobs:
               - '8.2/cli/**'
             php82-fpm:
               - '8.2/fpm/**'
+            php82-fpm-nginx-pgsql:
+              - '8.2/fpm-nginx-pgsql/**'
             php82-apache:
               - '8.2/apache/**'
             php74-apache:
@@ -122,6 +128,17 @@ jobs:
       image-tag: fuadkleb/php-pgsql:8.4-fpm-pgsql
       platforms: linux/amd64, linux/arm64
 
+  build-8_4-fpm-nginx-pgsql:
+    needs: changes
+    if: needs.changes.outputs.php84-fpm-nginx-pgsql == 'true' || needs.changes.outputs.ci-config == 'true'
+    uses: ./.github/workflows/createtest.pgsql.yml
+    name: fuadkleb/php-pgsql:8.4-fpm-nginx-pgsql
+    secrets: inherit
+    with:
+      source-directory: 8.4/fpm-nginx-pgsql
+      image-tag: fuadkleb/php-pgsql:8.4-fpm-nginx-pgsql
+      platforms: linux/amd64, linux/arm64
+
   build-8_4-fpm-alpine:
     needs: changes
     if: needs.changes.outputs.php84-fpm-alpine == 'true' || needs.changes.outputs.ci-config == 'true'
@@ -184,6 +201,17 @@ jobs:
     with:
       source-directory: 8.2/fpm
       image-tag: fuadkleb/php-mssql:8.2-fpm
+
+  build-8_2-fpm-nginx-pgsql:
+    needs: changes
+    if: needs.changes.outputs.php82-fpm-nginx-pgsql == 'true' || needs.changes.outputs.ci-config == 'true'
+    uses: ./.github/workflows/createtest.pgsql.yml
+    name: fuadkleb/php-pgsql:8.2-fpm-nginx-pgsql
+    secrets: inherit
+    with:
+      source-directory: 8.2/fpm-nginx-pgsql
+      image-tag: fuadkleb/php-pgsql:8.2-fpm-nginx-pgsql
+      platforms: linux/amd64, linux/arm64
 
   build-8_2-apache:
     needs: changes
