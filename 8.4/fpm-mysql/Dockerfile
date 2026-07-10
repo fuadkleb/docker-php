@@ -63,7 +63,6 @@ RUN set -eux; \
 COPY --from=composer_bin /usr/bin/composer /usr/local/bin/composer
 
 # --- Elastic APM agent (optional, arch-aware) -----------------------------------
-# If Elastic publishes arm64 .deb, set the file name accordingly. Otherwise skip on arm64.
 # Example keeps amd64 only to avoid failing on arm64.
 RUN set -eux; \
     curl -fsSL -o /tmp/apm-agent-php.deb \
