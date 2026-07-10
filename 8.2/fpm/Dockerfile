@@ -1,5 +1,7 @@
 FROM php:8.2-fpm-bullseye
 
+ARG TARGETARCH
+
 ENV ACCEPT_EULA=Y
 
 # Install prerequisites required for tools and extensions installed later on.
@@ -40,8 +42,8 @@ RUN sed -i "s/error_log = /;error_log = /" /usr/local/etc/php-fpm.d/docker.conf
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # Install Elastic APM 
-RUN curl -fsSL https://github.com/elastic/apm-agent-php/releases/download/v1.15.1/apm-agent-php_1.15.1_amd64.deb > /tmp/apm-gent-php.deb \
-    && dpkg -i /tmp/apm-gent-php.deb
+RUN curl -fsSL https://github.com/elastic/apm-agent-php/releases/download/v1.17.0/apm-agent-php_1.17.0_${TARGETARCH}.deb > /tmp/apm-agent-php.deb \
+    && dpkg -i /tmp/apm-agent-php.deb
 
 # Setting the work directory.
 WORKDIR /var/www

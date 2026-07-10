@@ -47,7 +47,7 @@ FROM php:8.4-fpm-alpine
 COPY --from=php_ext /usr/bin/install-php-extensions /usr/bin/install-php-extensions
 
 # Reapply the ODBC bits (they’re in the previous stage only)
-ENV ELASTIC_APM_PHP_VER=1.15.1\
+ENV ELASTIC_APM_PHP_VER=1.17.0\
     ACCEPT_EULA=Y
 ARG TARGETARCH
 ARG MSODBC_VER=18.5.1.1-1

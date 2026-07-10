@@ -90,7 +90,7 @@ COPY --from=composer_bin /usr/bin/composer /usr/local/bin/composer
 # Example keeps amd64 only to avoid failing on arm64.
 RUN set -eux; \
     curl -fsSL -o /tmp/apm-agent-php.deb \
-    "https://github.com/elastic/apm-agent-php/releases/download/v1.15.1/apm-agent-php_1.15.1_${TARGETARCH}.deb"; \
+    "https://github.com/elastic/apm-agent-php/releases/download/v1.17.0/apm-agent-php_1.17.0_${TARGETARCH}.deb"; \
     apt-get update; \
     apt-get install -y --no-install-recommends /tmp/apm-agent-php.deb; \
     rm -f /tmp/apm-agent-php.deb; \

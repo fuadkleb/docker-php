@@ -1,5 +1,6 @@
 FROM php:8.2-apache-bullseye
 
+ARG TARGETARCH
 
 ENV ACCEPT_EULA=Y
 
@@ -38,7 +39,8 @@ COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr
 
 RUN chmod uga+x /usr/bin/install-php-extensions \
     && sync \
-    && install-php-extensions bcmath gd opcache pdo_sqlsrv redis sqlsrv zip curl
+    && install-php-extensions bcmath gd opcache pdo_sqlsrv redis sqlsrv zip curl pgsql pdo_pgsql \
+    && rm -rf /tmp/* /var/tmp/*
 
 # ------------------------------------------------------------
 # OpenSSL TLS minimums (if you truly need TLSv1.0 compatibility)
@@ -54,7 +56,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 # ------------------------------------------------------------
 # Elastic APM (PHP Agent)
 # ------------------------------------------------------------
-RUN curl -fsSL https://github.com/elastic/apm-agent-php/releases/download/v1.15.1/apm-agent-php_1.15.1_amd64.deb -o /tmp/apm-agent-php.deb \
+RUN curl -fsSL https://github.com/elastic/apm-agent-php/releases/download/v1.17.0/apm-agent-php_1.17.0_${TARGETARCH}.deb -o /tmp/apm-agent-php.deb \
     && dpkg -i /tmp/apm-agent-php.deb \
     && rm -f /tmp/apm-agent-php.deb
 
