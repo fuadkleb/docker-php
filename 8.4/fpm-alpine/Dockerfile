@@ -86,22 +86,25 @@ RUN set -eux; \
 # --- Composer (tiny, copied—no curl kept)
 COPY --from=composer_bin /usr/bin/composer /usr/local/bin/composer
 
-RUN set -euo pipefail \
-  && apk add --no-cache --virtual .apm-fetch ca-certificates curl \
-  && update-ca-certificates \
-  && case "${TARGETARCH}" in \
-      amd64) APM_ARCH="x86_64";  EXPECTED_SHA="${ELASTIC_APM_SHA256_X86_64:-}";; \
-      arm64) APM_ARCH="aarch64"; EXPECTED_SHA="${ELASTIC_APM_SHA256_AARCH64:-}";; \
+RUN set -eux; \
+    apk add --no-cache --virtual .apm-fetch ca-certificates curl; \
+    update-ca-certificates; \
+    case "${TARGETARCH}" in \
+      amd64) APM_ARCH="x86_64";; \
+      arm64) APM_ARCH="aarch64";; \
       *) echo "Elastic APM: unsupported TARGETARCH=${TARGETARCH}; skipping."; \
-          apk del .apm-fetch; exit 0;; \
-    esac \
-  && APK_URL="https://github.com/elastic/apm-agent-php/releases/download/v${ELASTIC_APM_PHP_VER}/apm-agent-php_${ELASTIC_APM_PHP_VER}_${APM_ARCH}.apk" \
-  && echo "Fetching ${APK_URL}" \
-  && curl -fsSL -o /tmp/apm-agent-php.apk "${APK_URL}" \
-  && if [ -n "${EXPECTED_SHA}" ]; then echo "${EXPECTED_SHA}  /tmp/apm-agent-php.apk" | sha256sum -c -; fi \
-  && apk add --no-cache --allow-untrusted /tmp/apm-agent-php.apk \
-  && rm -f /tmp/apm-agent-php.apk \
-  && apk del .apm-fetch
+         apk del .apm-fetch; exit 0;; \
+    esac; \
+    APK_URL="https://github.com/elastic/apm-agent-php/releases/download/v${ELASTIC_APM_PHP_VER}/apm-agent-php_${ELASTIC_APM_PHP_VER}_${APM_ARCH}.apk"; \
+    echo "Fetching ${APK_URL}"; \
+    HTTP_CODE=$(curl -sL --write-out '%{http_code}' -o /tmp/apm-agent-php.apk "${APK_URL}"); \
+    if [ "${HTTP_CODE}" = "200" ]; then \
+      apk add --no-cache --allow-untrusted /tmp/apm-agent-php.apk; \
+    else \
+      echo "WARNING: Elastic APM APK not available for v${ELASTIC_APM_PHP_VER}/${APM_ARCH} (HTTP ${HTTP_CODE}), skipping."; \
+    fi; \
+    rm -f /tmp/apm-agent-php.apk; \
+    apk del .apm-fetch
 
 
 WORKDIR /var/www

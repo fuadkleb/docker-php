@@ -75,7 +75,6 @@ jobs:
           image: ${{ inputs.image-tag }}-ci
           options: >-
             -v ${{ github.workspace }}/.ci/tests:/work
-            --network host
             -e MYSQL_HOST=mysql
             -e MYSQL_PORT=3306
             -e MYSQL_DATABASE=testdb
