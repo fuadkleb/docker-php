@@ -172,6 +172,7 @@ RUN sed -ri 's|^CustomLog .*|CustomLog /dev/null combined|' /etc/apache2/sites-a
 #     && chmod +x /usr/local/bin/start.sh
 # CMD ["start.sh"]
 
+
 # ------------------------------------------------------------
 # End of Dockerfile
 # ------------------------------------------------------------
