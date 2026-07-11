@@ -26,6 +26,7 @@ jobs:
       php82-fpm: ${{ steps.filter.outputs.php82-fpm }}
       php82-fpm-nginx-pgsql: ${{ steps.filter.outputs.php82-fpm-nginx-pgsql }}
       php82-apache: ${{ steps.filter.outputs.php82-apache }}
+      php80-apache-mssql-pgsql: ${{ steps.filter.outputs.php80-apache-mssql-pgsql }}
       php74-apache: ${{ steps.filter.outputs.php74-apache }}
     steps:
       - uses: actions/checkout@v4
@@ -63,6 +64,8 @@ jobs:
               - '8.2/fpm-nginx-pgsql/**'
             php82-apache:
               - '8.2/apache/**'
+            php80-apache-mssql-pgsql:
+              - '8.0/apache-mssql-pgsql/**'
             php74-apache:
               - '7.4/apache-pgsql/**'
 
@@ -217,6 +220,18 @@ jobs:
       source-directory: 8.2/apache
       image-tag: fuadkleb/php-mssql:8.2-apache
       platforms: linux/amd64, linux/arm64
+
+  # PHP 8.0 Debian
+  build-8_0-apache-mssql-pgsql:
+    needs: changes
+    if: needs.changes.outputs.php80-apache-mssql-pgsql == 'true'
+    uses: ./.github/workflows/createtest.mssql.yml
+    name: fuadkleb/php-mssql:8.0-apache-mssql-pgsql
+    secrets: inherit
+    with:
+      source-directory: 8.0/apache-mssql-pgsql
+      image-tag: fuadkleb/php-mssql:8.0-apache-mssql-pgsql
+      platforms: linux/amd64
 
   # PHP 7.4 (PostgreSQL)
   build-7_4-apache:
