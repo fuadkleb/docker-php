@@ -21,6 +21,7 @@ jobs:
       php84-fpm-alpine: ${{ steps.filter.outputs.php84-fpm-alpine }}
       php84-franken: ${{ steps.filter.outputs.php84-franken }}
       php85-apache-mssql-pgsql: ${{ steps.filter.outputs.php85-apache-mssql-pgsql }}
+      php85-franken: ${{ steps.filter.outputs.php85-franken }}
       php84-apache-mssql-pgsql: ${{ steps.filter.outputs.php84-apache-mssql-pgsql }}
       php83-cli: ${{ steps.filter.outputs.php83-cli }}
       php83-fpm: ${{ steps.filter.outputs.php83-fpm }}
@@ -57,6 +58,8 @@ jobs:
               - '8.4/franken/**'
             php85-apache-mssql-pgsql:
               - '8.5/apache-mssql-pgsql/**'
+            php85-franken:
+              - '8.5/franken/**'
             php84-apache-mssql-pgsql:
               - '8.4/apache-mssql-pgsql/**'
             php83-cli:
@@ -165,6 +168,7 @@ jobs:
     with:
       source-directory: 8.4/franken
       image-tag: fuadkleb/php-mssql:8.4-franken
+      platforms: linux/amd64, linux/arm64
 
   build-8_4-apache-mssql-pgsql:
     needs: changes
@@ -187,6 +191,17 @@ jobs:
     with:
       source-directory: 8.5/apache-mssql-pgsql
       image-tag: fuadkleb/php-mssql:8.5-apache-mssql-pgsql
+      platforms: linux/amd64, linux/arm64
+
+  build-8_5-franken:
+    needs: changes
+    if: needs.changes.outputs.php85-franken == 'true'
+    uses: ./.github/workflows/createtest.mssql.yml
+    name: fuadkleb/php-mssql:8.5-franken
+    secrets: inherit
+    with:
+      source-directory: 8.5/franken
+      image-tag: fuadkleb/php-mssql:8.5-franken
       platforms: linux/amd64, linux/arm64
 
   # PHP 8.3 Debian
