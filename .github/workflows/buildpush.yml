@@ -22,9 +22,12 @@ jobs:
       php84-franken: ${{ steps.filter.outputs.php84-franken }}
       php85-apache-mssql-pgsql: ${{ steps.filter.outputs.php85-apache-mssql-pgsql }}
       php85-franken: ${{ steps.filter.outputs.php85-franken }}
+      php85-openswoole-mssql-pgsql: ${{ steps.filter.outputs.php85-openswoole-mssql-pgsql }}
       php84-apache-mssql-pgsql: ${{ steps.filter.outputs.php84-apache-mssql-pgsql }}
+      php84-openswoole-mssql-pgsql: ${{ steps.filter.outputs.php84-openswoole-mssql-pgsql }}
       php83-cli: ${{ steps.filter.outputs.php83-cli }}
       php83-fpm: ${{ steps.filter.outputs.php83-fpm }}
+      php83-openswoole-mssql-pgsql: ${{ steps.filter.outputs.php83-openswoole-mssql-pgsql }}
       php82-cli: ${{ steps.filter.outputs.php82-cli }}
       php82-fpm: ${{ steps.filter.outputs.php82-fpm }}
       php82-fpm-nginx-pgsql: ${{ steps.filter.outputs.php82-fpm-nginx-pgsql }}
@@ -60,12 +63,18 @@ jobs:
               - '8.5/apache-mssql-pgsql/**'
             php85-franken:
               - '8.5/franken/**'
+            php85-openswoole-mssql-pgsql:
+              - '8.5/openswoole-mssql-pgsql/**'
             php84-apache-mssql-pgsql:
               - '8.4/apache-mssql-pgsql/**'
+            php84-openswoole-mssql-pgsql:
+              - '8.4/openswoole-mssql-pgsql/**'
             php83-cli:
               - '8.3/cli/**'
             php83-fpm:
               - '8.3/fpm/**'
+            php83-openswoole-mssql-pgsql:
+              - '8.3/openswoole-mssql-pgsql/**'
             php82-cli:
               - '8.2/cli/**'
             php82-fpm:
@@ -181,6 +190,17 @@ jobs:
       image-tag: fuadkleb/php-mssql:8.4-apache-mssql-pgsql
       platforms: linux/amd64, linux/arm64
 
+  build-8_4-openswoole-mssql-pgsql:
+    needs: changes
+    if: needs.changes.outputs.php84-openswoole-mssql-pgsql == 'true'
+    uses: ./.github/workflows/createtest.mssql.yml
+    name: fuadkleb/php-mssql:8.4-openswoole-mssql-pgsql
+    secrets: inherit
+    with:
+      source-directory: 8.4/openswoole-mssql-pgsql
+      image-tag: fuadkleb/php-mssql:8.4-openswoole-mssql-pgsql
+      platforms: linux/amd64, linux/arm64
+
   # PHP 8.5 Debian
   build-8_5-apache-mssql-pgsql:
     needs: changes
@@ -204,6 +224,17 @@ jobs:
       image-tag: fuadkleb/php-mssql:8.5-franken
       platforms: linux/amd64, linux/arm64
 
+  build-8_5-openswoole-mssql-pgsql:
+    needs: changes
+    if: needs.changes.outputs.php85-openswoole-mssql-pgsql == 'true'
+    uses: ./.github/workflows/createtest.mssql.yml
+    name: fuadkleb/php-mssql:8.5-openswoole-mssql-pgsql
+    secrets: inherit
+    with:
+      source-directory: 8.5/openswoole-mssql-pgsql
+      image-tag: fuadkleb/php-mssql:8.5-openswoole-mssql-pgsql
+      platforms: linux/amd64, linux/arm64
+
   # PHP 8.3 Debian
   build-8_3-cli:
     needs: changes
@@ -224,6 +255,17 @@ jobs:
     with:
       source-directory: 8.3/fpm
       image-tag: fuadkleb/php-mssql:8.3-fpm
+
+  build-8_3-openswoole-mssql-pgsql:
+    needs: changes
+    if: needs.changes.outputs.php83-openswoole-mssql-pgsql == 'true'
+    uses: ./.github/workflows/createtest.mssql.yml
+    name: fuadkleb/php-mssql:8.3-openswoole-mssql-pgsql
+    secrets: inherit
+    with:
+      source-directory: 8.3/openswoole-mssql-pgsql
+      image-tag: fuadkleb/php-mssql:8.3-openswoole-mssql-pgsql
+      platforms: linux/amd64, linux/arm64
 
   # PHP 8.2 Debian
   build-8_2-cli:
