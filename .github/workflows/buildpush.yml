@@ -20,6 +20,7 @@ jobs:
       php84-fpm-nginx-pgsql: ${{ steps.filter.outputs.php84-fpm-nginx-pgsql }}
       php84-fpm-alpine: ${{ steps.filter.outputs.php84-fpm-alpine }}
       php84-franken: ${{ steps.filter.outputs.php84-franken }}
+      php85-cli: ${{ steps.filter.outputs.php85-cli }}
       php85-apache-mssql-pgsql: ${{ steps.filter.outputs.php85-apache-mssql-pgsql }}
       php85-franken: ${{ steps.filter.outputs.php85-franken }}
       php85-openswoole-mssql-pgsql: ${{ steps.filter.outputs.php85-openswoole-mssql-pgsql }}
@@ -62,6 +63,8 @@ jobs:
               - '8.4/fpm-alpine/**'
             php84-franken:
               - '8.4/franken/**'
+            php85-cli:
+              - '8.5/cli/**'
             php85-apache-mssql-pgsql:
               - '8.5/apache-mssql-pgsql/**'
             php85-franken:
@@ -222,6 +225,17 @@ jobs:
       platforms: linux/amd64, linux/arm64
 
   # PHP 8.5 Debian
+  build-8_5-cli:
+    needs: changes
+    if: needs.changes.outputs.php85-cli == 'true'
+    uses: ./.github/workflows/createtest.mssql.yml
+    name: fuadkleb/php-mssql:8.5-cli
+    secrets: inherit
+    with:
+      source-directory: 8.5/cli
+      image-tag: fuadkleb/php-mssql:8.5-cli
+      platforms: linux/amd64, linux/arm64
+
   build-8_5-apache-mssql-pgsql:
     needs: changes
     if: needs.changes.outputs.php85-apache-mssql-pgsql == 'true'
