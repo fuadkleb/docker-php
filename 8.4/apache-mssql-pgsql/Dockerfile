@@ -1,6 +1,6 @@
 # PHP 8.4 + Apache + MSSQL + PostgreSQL base image (Debian 12 Bookworm)
 # Intended as a pre-built base so downstream projects skip the slow build step.
-FROM php:8.4-apache-bookworm
+FROM php:8.4.27-apache-bookworm
 
 ARG TARGETARCH
 

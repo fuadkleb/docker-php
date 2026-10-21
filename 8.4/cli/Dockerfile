@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.7
-FROM php:8.4-cli-bookworm
+FROM php:8.4.27-cli-bookworm
 
 ARG TARGETPLATFORM
 ARG TARGETARCH
@@ -36,7 +36,7 @@ RUN set -eux; \
 # -- Bring in install-php-extensions ---------------------------------------------
 FROM --platform=$BUILDPLATFORM mlocati/php-extension-installer:latest AS php_ext
 FROM --platform=$BUILDPLATFORM composer:latest AS composer_bin
-FROM php:8.4-cli-bookworm
+FROM php:8.4.27-cli-bookworm
 
 ARG TARGETARCH
 ENV ACCEPT_EULA=Y \

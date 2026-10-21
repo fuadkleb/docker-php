@@ -1,4 +1,4 @@
-FROM php:8.2-apache-bullseye
+FROM php:8.2.35-apache-bookworm
 
 ARG TARGETARCH
 
@@ -20,7 +20,7 @@ RUN apt-get update \
 # Install prerequisites for the sqlsrv and pdo_sqlsrv PHP extensions.
 RUN set -eux; \
     curl -fsSL -o /tmp/packages-microsoft-prod.deb \
-      "https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb"; \
+      "https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb"; \
     dpkg -i /tmp/packages-microsoft-prod.deb; \
     rm -f /tmp/packages-microsoft-prod.deb; \
     apt-get update; \
@@ -42,8 +42,11 @@ RUN chmod uga+x /usr/bin/install-php-extensions \
 # ------------------------------------------------------------
 # OpenSSL TLS minimums (if you truly need TLSv1.0 compatibility)
 # ------------------------------------------------------------
-RUN sed -i "s/\(MinProtocol *= *\).*/\1TLSv1.0 /" "/etc/ssl/openssl.cnf" \
- && sed -i "s/\(CipherString *= *\).*/\1DEFAULT@SECLEVEL=1 /" "/etc/ssl/openssl.cnf"
+# Debian 12 ships OpenSSL 3 with no MinProtocol/CipherString lines to edit, so add them.
+# OpenSSL 3 only allows TLS 1.0/1.1 at SECLEVEL=0 (bullseye's OpenSSL 1.1 allowed it at SECLEVEL=1).
+RUN set -eux; \
+    sed -i '/^\[openssl_init\]/a ssl_conf = ssl_sect' /etc/ssl/openssl.cnf; \
+    printf '\n[ssl_sect]\nsystem_default = system_default_sect\n\n[system_default_sect]\nMinProtocol = TLSv1\nCipherString = DEFAULT@SECLEVEL=0\n' >> /etc/ssl/openssl.cnf
 
 # ------------------------------------------------------------
 # Composer

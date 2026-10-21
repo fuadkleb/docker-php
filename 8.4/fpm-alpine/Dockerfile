@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-alpine
+FROM php:8.4.27-fpm-alpine
 
 ARG TARGETPLATFORM
 ARG TARGETARCH
@@ -43,7 +43,7 @@ RUN set -euo pipefail \
 # (use a stage so the helper binary is copied without pulling the whole image into the final layers)
 FROM --platform=$BUILDPLATFORM mlocati/php-extension-installer:latest AS php_ext
 FROM --platform=$BUILDPLATFORM composer:latest AS composer_bin
-FROM php:8.4-fpm-alpine
+FROM php:8.4.27-fpm-alpine
 COPY --from=php_ext /usr/bin/install-php-extensions /usr/bin/install-php-extensions
 
 # Reapply the ODBC bits (they’re in the previous stage only)

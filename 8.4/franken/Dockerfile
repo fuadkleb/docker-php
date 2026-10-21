@@ -1,5 +1,5 @@
 # PHP 8.4 + FrankenPHP (Debian 12)
-FROM dunglas/frankenphp:php8.4-bookworm
+FROM dunglas/frankenphp:1.13.2-php8.4.27-bookworm
 
 # # Microsoft ODBC 18 + runtime ODBC deps
 RUN set -eux; \

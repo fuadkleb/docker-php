@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 FROM --platform=$BUILDPLATFORM mlocati/php-extension-installer:latest AS php_ext
 FROM --platform=$BUILDPLATFORM composer:latest AS composer_bin
-FROM php:8.2-fpm-bookworm
+FROM php:8.2.35-fpm-bookworm
 
 ARG TARGETARCH
 ENV ACCEPT_EULA=Y \

@@ -1,5 +1,5 @@
 # PHP 8.3 + OpenSwoole + MSSQL + PostgreSQL + Infisical CLI (Debian 12 Bookworm)
-FROM php:8.3-cli-bookworm
+FROM php:8.3.36-cli-bookworm
 
 ARG TARGETARCH
 

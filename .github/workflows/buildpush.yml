@@ -214,8 +214,12 @@ jobs:
       platforms: linux/amd64, linux/arm64
 
   build-8_4-openswoole-mssql-pgsql-apm:
-    needs: changes
-    if: needs.changes.outputs.php84-openswoole-mssql-pgsql-apm == 'true'
+    # Built FROM the image above, so wait for it and rebuild whenever it changes.
+    needs: [changes, build-8_4-openswoole-mssql-pgsql]
+    if: >-
+      ${{ !failure() && !cancelled() &&
+      (needs.changes.outputs.php84-openswoole-mssql-pgsql-apm == 'true' ||
+       needs.changes.outputs.php84-openswoole-mssql-pgsql == 'true') }}
     uses: ./.github/workflows/createtest.mssql.yml
     name: fuadkleb/php-mssql:8.4-openswoole-mssql-pgsql-apm
     secrets: inherit
@@ -270,8 +274,12 @@ jobs:
       platforms: linux/amd64, linux/arm64
 
   build-8_5-openswoole-mssql-pgsql-apm:
-    needs: changes
-    if: needs.changes.outputs.php85-openswoole-mssql-pgsql-apm == 'true'
+    # Built FROM the image above, so wait for it and rebuild whenever it changes.
+    needs: [changes, build-8_5-openswoole-mssql-pgsql]
+    if: >-
+      ${{ !failure() && !cancelled() &&
+      (needs.changes.outputs.php85-openswoole-mssql-pgsql-apm == 'true' ||
+       needs.changes.outputs.php85-openswoole-mssql-pgsql == 'true') }}
     uses: ./.github/workflows/createtest.mssql.yml
     name: fuadkleb/php-mssql:8.5-openswoole-mssql-pgsql-apm
     secrets: inherit
@@ -313,8 +321,12 @@ jobs:
       platforms: linux/amd64, linux/arm64
 
   build-8_3-openswoole-mssql-pgsql-apm:
-    needs: changes
-    if: needs.changes.outputs.php83-openswoole-mssql-pgsql-apm == 'true'
+    # Built FROM the image above, so wait for it and rebuild whenever it changes.
+    needs: [changes, build-8_3-openswoole-mssql-pgsql]
+    if: >-
+      ${{ !failure() && !cancelled() &&
+      (needs.changes.outputs.php83-openswoole-mssql-pgsql-apm == 'true' ||
+       needs.changes.outputs.php83-openswoole-mssql-pgsql == 'true') }}
     uses: ./.github/workflows/createtest.mssql.yml
     name: fuadkleb/php-mssql:8.3-openswoole-mssql-pgsql-apm
     secrets: inherit

@@ -1,6 +1,6 @@
-# PHP 8.2 + Apache + MSSQL + PostgreSQL base image (Debian 11 Bullseye)
+# PHP 8.2 + Apache + MSSQL + PostgreSQL base image (Debian 12 Bookworm)
 # Intended as a pre-built base so downstream projects skip the slow build step.
-FROM php:8.2-apache-bullseye
+FROM php:8.2.35-apache-bookworm
 
 ARG TARGETARCH
 
@@ -24,7 +24,7 @@ RUN set -eux; \
 # ------------------------------------------------------------
 RUN set -eux; \
     curl -fsSL -o /tmp/packages-microsoft-prod.deb \
-      "https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb"; \
+      "https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb"; \
     dpkg -i /tmp/packages-microsoft-prod.deb; \
     rm -f /tmp/packages-microsoft-prod.deb; \
     apt-get update; \

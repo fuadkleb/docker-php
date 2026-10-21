@@ -1,4 +1,4 @@
-FROM php:8.2-cli-bullseye
+FROM php:8.2.35-cli-bookworm
 
 ENV ACCEPT_EULA=Y
 
@@ -7,19 +7,15 @@ RUN apt-get update \
     && apt-get install -y apt-transport-https gnupg2 libpng-dev libzip-dev nano unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Install prerequisites for the sqlsrv and pdo_sqlsrv PHP extensions.
-# Some packages are pinned with lower priority to prevent build issues due to package conflicts.
-# Link: https://github.com/microsoft/linux-package-repositories/issues/39
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-    && curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list \
-    && echo "Package: unixodbc\nPin: origin \"packages.microsoft.com\"\nPin-Priority: 100\n" >> /etc/apt/preferences.d/microsoft \
-    && echo "Package: unixodbc-dev\nPin: origin \"packages.microsoft.com\"\nPin-Priority: 100\n" >> /etc/apt/preferences.d/microsoft \
-    && echo "Package: libodbc1:amd64\nPin: origin \"packages.microsoft.com\"\nPin-Priority: 100\n" >> /etc/apt/preferences.d/microsoft \
-    && echo "Package: odbcinst\nPin: origin \"packages.microsoft.com\"\nPin-Priority: 100\n" >> /etc/apt/preferences.d/microsoft \
-    && echo "Package: odbcinst1debian2:amd64\nPin: origin \"packages.microsoft.com\"\nPin-Priority: 100\n" >> /etc/apt/preferences.d/microsoft \
-    && apt-get update \
-    && apt-get install -y msodbcsql18 mssql-tools18 unixodbc-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Install prerequisites for the sqlsrv and pdo_sqlsrv PHP extensions (Microsoft repo for Debian 12).
+RUN set -eux; \
+    curl -fsSL -o /tmp/packages-microsoft-prod.deb \
+      "https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb"; \
+    dpkg -i /tmp/packages-microsoft-prod.deb; \
+    rm -f /tmp/packages-microsoft-prod.deb; \
+    apt-get update; \
+    ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 unixodbc-dev; \
+    rm -rf /var/lib/apt/lists/*
 
 # Retrieve the script used to install PHP extensions from the source container.
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/install-php-extensions
@@ -29,9 +25,12 @@ RUN chmod uga+x /usr/bin/install-php-extensions \
     && sync \
     && install-php-extensions bcmath ds exif gd intl opcache pcntl pcov pdo_sqlsrv redis sqlsrv zip pgsql pdo_pgsql
 
-# Set Min Protocol OpenSSL TLS1.0
-RUN sed -i "s/\(MinProtocol *= *\).*/\1TLSv1.0 /" "/etc/ssl/openssl.cnf"
-RUN sed -i "s/\(CipherString *= *\).*/\1DEFAULT@SECLEVEL=1 /" "/etc/ssl/openssl.cnf"
+# Allow TLS 1.0 (legacy SQL Server).
+# Debian 12 ships OpenSSL 3 with no MinProtocol/CipherString lines to edit, so add them.
+# OpenSSL 3 only allows TLS 1.0/1.1 at SECLEVEL=0 (bullseye's OpenSSL 1.1 allowed it at SECLEVEL=1).
+RUN set -eux; \
+    sed -i '/^\[openssl_init\]/a ssl_conf = ssl_sect' /etc/ssl/openssl.cnf; \
+    printf '\n[ssl_sect]\nsystem_default = system_default_sect\n\n[system_default_sect]\nMinProtocol = TLSv1\nCipherString = DEFAULT@SECLEVEL=0\n' >> /etc/ssl/openssl.cnf
 
 # Downloading composer and marking it as executable.
 RUN curl -o /usr/local/bin/composer https://getcomposer.org/composer-stable.phar \
