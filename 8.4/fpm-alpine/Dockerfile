@@ -95,7 +95,9 @@ RUN set -eux; \
       *) echo "Elastic APM: unsupported TARGETARCH=${TARGETARCH}; skipping."; \
          apk del .apm-fetch; exit 0;; \
     esac; \
-    APK_URL="https://github.com/elastic/apm-agent-php/releases/download/v${ELASTIC_APM_PHP_VER}/apm-agent-php_${ELASTIC_APM_PHP_VER}_${APM_ARCH}.apk"; \
+    # Alpine 3.23+ uses apk-tools v3, which rejects the old "apm-agent-php_<ver>_<arch>.apk".
+    # Use the apk-v3 compatible "-r0" package instead.
+    APK_URL="https://github.com/elastic/apm-agent-php/releases/download/v${ELASTIC_APM_PHP_VER}/apm-agent-php-${ELASTIC_APM_PHP_VER}-r0.${APM_ARCH}.apk"; \
     echo "Fetching ${APK_URL}"; \
     HTTP_CODE=$(curl -sL --write-out '%{http_code}' -o /tmp/apm-agent-php.apk "${APK_URL}"); \
     if [ "${HTTP_CODE}" = "200" ]; then \
